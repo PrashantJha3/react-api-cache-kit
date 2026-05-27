@@ -1,94 +1,262 @@
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-
-
-```
-
 # react-api-cache-kit
 
-Lightweight React API caching library with:
+A lightweight and production-ready React API caching library with retry handling, localStorage persistence, automatic refetching, and TypeScript support.
 
-- API caching
-- Retry logic
-- LocalStorage persistence
-- Auto cleanup
-- TypeScript support
-- Refetching
+Built for modern frontend applications to reduce unnecessary API calls, improve performance, and simplify remote data management using an easy-to-use React hook API.
 
-## Installation
+---
+
+# Features
+
+✅ Lightweight and fast
+✅ React Hooks based API
+✅ In-memory caching
+✅ LocalStorage persistence
+✅ Retry failed API requests
+✅ Automatic refetching
+✅ Configurable cache time & stale time
+✅ TypeScript support
+✅ Auto cache cleanup
+✅ Minimal setup required
+✅ Developer-friendly API
+✅ Optimized for React applications
+
+---
+
+# Why Use react-api-cache-kit?
+
+Modern React applications often make repeated API requests that slow down performance and create unnecessary backend load.
+
+`react-api-cache-kit` helps solve these common frontend problems by providing:
+
+* Faster data fetching using cache
+* Reduced duplicate API calls
+* Better user experience
+* Offline-friendly persistence
+* Automatic retry handling
+* Cleaner frontend architecture
+* Lightweight alternative to larger libraries
+
+Unlike heavy state-management or query libraries, this package focuses on simplicity, performance, and easy integration.
+
+Perfect for:
+
+* Enterprise dashboards
+* Admin panels
+* Financial applications
+* SaaS platforms
+* Analytics systems
+* Data-heavy frontend applications
+
+---
+
+# Installation
 
 ```bash
 npm install react-api-cache-kit
+```
+
+or
+
+```bash
+yarn add react-api-cache-kit
+```
+
+---
+
+# Quick Start
+
+```tsx
+import { useApiCache } from 'react-api-cache-kit';
+
+function Users() {
+  const { data, loading, error, refetch } = useApiCache(
+    'users',
+    async () => {
+      const response = await fetch(
+        'https://jsonplaceholder.typicode.com/users'
+      );
+
+      return response.json();
+    },
+    {
+      retry: 2,
+      persist: true,
+    }
+  );
+
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
+
+  if (error) {
+    return <h2>Error loading users</h2>;
+  }
+
+  return (
+    <div>
+      <button onClick={refetch}>Refetch</button>
+
+      {data?.map((user: any) => (
+        <div key={user.id}>
+          <h3>{user.name}</h3>
+          <p>{user.email}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default Users;
+```
+
+---
+
+# API Documentation
+
+## useApiCache
+
+### Syntax
+
+```tsx
+useApiCache(
+  key,
+  fetcher,
+  options
+)
+```
+
+---
+
+## Parameters
+
+| Parameter | Type     | Description                       |
+| --------- | -------- | --------------------------------- |
+| key       | string   | Unique cache key                  |
+| fetcher   | function | Async function returning API data |
+| options   | object   | Optional configuration            |
+
+---
+
+## Options
+
+| Option      | Type    | Default   | Description                   |
+| ----------- | ------- | --------- | ----------------------------- |
+| enabled     | boolean | true      | Enable or disable fetching    |
+| retry       | number  | 3         | Retry failed requests         |
+| cacheTime   | number  | 300000    | Cache cleanup time            |
+| staleTime   | number  | 30000     | Data freshness duration       |
+| persist     | boolean | false     | Persist cache in localStorage |
+| initialData | any     | undefined | Initial default data          |
+
+---
+
+## Return Values
+
+| Property | Description             |
+| -------- | ----------------------- |
+| data     | API response data       |
+| loading  | Loading state           |
+| error    | Error object            |
+| refetch  | Manual refetch function |
+
+---
+
+# Advanced Example
+
+```tsx
+const { data, loading } = useApiCache(
+  'products',
+  async () => {
+    const response = await fetch('/api/products');
+    return response.json();
+  },
+  {
+    retry: 5,
+    persist: true,
+    staleTime: 60000,
+    cacheTime: 300000,
+  }
+);
+```
+
+---
+
+# Package Structure
+
+```bash
+react-api-cache-kit/
+│
+├── cache/
+├── hooks/
+├── utils/
+├── types/
+└── index.ts
+```
+
+---
+
+# Upcoming Features
+
+* Request deduplication
+* Suspense support
+* SSR support
+* Infinite queries
+* Mutation support
+* Devtools
+* Optimistic updates
+* WebSocket synchronization
+
+---
+
+# Screenshots
+
+Coming soon.
+
+Planned screenshots:
+
+* API caching demo
+* Performance comparison
+* React DevTools integration
+* Cache persistence examples
+
+---
+
+# Performance Goals
+
+The package is optimized for:
+
+* Small bundle size
+* Fast cache retrieval
+* Minimal re-renders
+* Easy scalability
+* Enterprise frontend performance
+
+---
+
+# Tech Stack
+
+* React
+* TypeScript
+* tsup
+* Vitest
+
+---
+
+# Contributing
+
+Contributions, issues, and feature requests are welcome.
+
+Feel free to fork the repository and submit pull requests.
+
+---
+
+# License
+
+MIT
+
+---
+
+# Keywords
+
+React Cache, React Query Alternative, React Hooks, API Cache, Frontend Optimization, React Performance, TypeScript React Library
