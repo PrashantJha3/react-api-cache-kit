@@ -1,5 +1,5 @@
 {
-  "name": "@prashantjha/react-api-cache-kit",
+  "name": "@prashantjha043/react-api-cache-kit",
   "version": "1.0.0",
   "description": "Lightweight React API caching library with retry, deduplication and persistence",
   "main": "dist/index.js",
